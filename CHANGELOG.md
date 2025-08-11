@@ -1,7 +1,8 @@
-## Unreleased
+## 1.0.2 (2025-08-11)
 
 ### 🐛🚑️ Fixes
 
+- Fixing composer version
 - Fixing deps
 
 ## v1.0.1 (2025-08-11)
