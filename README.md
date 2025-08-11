@@ -38,7 +38,7 @@ if ($price < 0) {
 This package brings a **concise, expressive, and consistent way** to write those checks:
 
 ```php
-guard($price < 0, 'Price must be non-negative');
+guard($price >= 0, 'Price must be non-negative');
 ```
 
 Benefits:
@@ -91,19 +91,19 @@ composer require adriengras/guard-php
 ### Basic example
 
 ```php
-guard($price < 0, 'Price must be non-negative');
+guard($price >= 0, 'Price must be non-negative');
 ```
 
 ### With a custom exception
 
 ```php
-guard($user === null, new DomainException('User not found'));
+guard($user !== null, new DomainException('User not found'));
 ```
 
 ### Lazy exception (callable)
 
 ```php
-guard($stock < $qty, fn() => new OutOfRangeException("Not enough stock for SKU {$sku}"));
+guard($stock >= $qty, fn() => new OutOfRangeException("Not enough stock for SKU {$sku}"));
 ```
 
 ## 🧩 Framework compatibility
