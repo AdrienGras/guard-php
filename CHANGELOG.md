@@ -1,4 +1,10 @@
-## 1.0.3 (2025-08-11)
+## 1.0.4 (2025-08-11)
+
+### ✨ Features
+
+- Adding wrapper for exception to trace as userland exception
+
+## v1.0.3 (2025-08-11)
 
 ### 📌➕⬇️➖⬆️ Dependencies
 
