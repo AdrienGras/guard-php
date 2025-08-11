@@ -22,28 +22,89 @@ if (!function_exists('guard')) {
         bool $condition,
         Throwable|callable|string|null $onFailure = null,
         ?int $code = null,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
+        bool $blameCaller = true
     ): void {
         if ($condition) {
             return;
         }
 
-        // callable → fabrique l'exception à la demande
+        // 1) Build the exception to throw
         if (is_callable($onFailure)) {
             $ex = $onFailure();
             if (!$ex instanceof Throwable) {
-                throw new LogicException('guard() callable must return a Throwable');
+                // blame caller for misuse
+                $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+                $caller = $bt[1] ?? null;
+                throw new ErrorException(
+                    'guard() callable must return a Throwable',
+                    0,
+                    E_USER_ERROR,
+                    $caller['file'] ?? __FILE__,
+                    $caller['line'] ?? __LINE__
+                );
             }
+        } elseif ($onFailure instanceof Throwable) {
+            $ex = $onFailure;
+        } else {
+            $ex = new InvalidArgumentException((string)($onFailure ?? 'Guard assertion failed'), $code ?? 0, $previous);
+        }
+
+        if (!$blameCaller) {
             throw $ex;
         }
 
-        // exception fournie
-        if ($onFailure instanceof Throwable) {
-            throw $onFailure;
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 0); // un peu de marge
+        $callerFile = __FILE__;
+        $callerLine = __LINE__;
+
+        foreach ($bt as $frame) {
+            if (!isset($frame['file'], $frame['line'])) {
+                continue;
+            }
+            $file = (string)$frame['file'];
+
+            // Skip: notre fichier + tout ce qui est dans vendor/
+            if (str_contains($file, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+            if ($file === __FILE__) {
+                continue;
+            }
+
+            $callerFile = $file;
+            $callerLine = (int)$frame['line'];
+            break;
         }
 
-        // message simple
-        $message = $onFailure ?? 'Guard assertion failed';
-        throw new InvalidArgumentException((string)$message, $code ?? 0, $previous);
+        // 3) Tenter de réécrire file/line, sinon wrap
+        static $relocate = null;
+        $relocate ??= static function (Throwable $e, string $file, int $line): bool {
+            try {
+                $rpFile = new ReflectionProperty($e, 'file');
+                $rpLine = new ReflectionProperty($e, 'line');
+                $rpFile->setAccessible(true);
+                $rpLine->setAccessible(true);
+                $rpFile->setValue($e, $file);
+                $rpLine->setValue($e, $line);
+                return true;
+            } catch (Throwable) {
+                return false;
+            }
+        };
+
+        if ($relocate($ex, $callerFile, $callerLine)) {
+            throw $ex; // type conservé
+        }
+
+        // Fallback: wrap pour “blâmer” l'appelant
+        throw new ErrorException(
+            $ex->getMessage(),
+            $ex->getCode(),
+            E_USER_ERROR,
+            $callerFile,
+            $callerLine,
+            $ex
+        );
     }
 }

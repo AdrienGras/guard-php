@@ -18,6 +18,7 @@ Available globally via Composer — works in **plain PHP, Symfony, and Laravel**
   - Simple error message
   - Existing exception instance
   - Lazy exception factory (`callable`)
+- **Caller blame** mode: the error is shown as if it occurred where `guard()` was called, not inside the package
 - PHP **8.1+** compatible
 - Zero runtime dependencies
 
@@ -46,6 +47,36 @@ Benefits:
 - **Consistency** – Same syntax across all projects and frameworks
 - **Less boilerplate** – No repetitive if + throw blocks
 - **Framework-agnostic** – Works in plain PHP, Symfony, Laravel…
+
+## ⚙️ How it works — Caller blame mode
+
+By default, guard() is in caller **blame mode** (`$blameCaller = true`):
+
+- It scans the **debug backtrace** to find the first frame **outside** `vendor/` and outside the `guard.php` file itself.
+- It then _tries_ to rewrite the `$file` and `$line` properties of the exception via `ReflectionProperty` so the error appears to originate from your code.
+- If PHP forbids modifying these properties (some runtimes mark them internally as readonly), `guard()` falls back to **wrapping** the original exception in an `ErrorException`:
+  - The new exception has `file` and `line` set to the caller’s location
+  - The original exception is preserved as `$previous`
+
+Example — without blame:
+
+```txt
+In vendor/your-vendor/guard-php/src/functions.php line 47:
+Price must be non-negative
+```
+
+Example — with blame (default):
+
+```txt
+In src/Service/CheckoutService.php line 123:
+Price must be non-negative
+```
+
+You can disable caller blame explicitly:
+
+```php
+guard($condition, 'message', null, null, false);
+```
 
 ## 📦 Installation
 
