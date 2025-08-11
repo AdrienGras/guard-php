@@ -21,6 +21,32 @@ Available globally via Composer — works in **plain PHP, Symfony, and Laravel**
 - PHP **8.1+** compatible
 - Zero runtime dependencies
 
+## ❓ Why this package?
+
+Defensive programming is a key practice to make your code more reliable and easier to debug.  
+Languages like **Kotlin** and **Swift** provide a native `guard` statement to quickly validate assumptions and fail fast when something is wrong.
+
+In PHP, similar checks often look like this:
+
+```php
+if ($price < 0) {
+    throw new InvalidArgumentException('Price must be non-negative');
+}
+```
+
+This package brings a **concise, expressive, and consistent way** to write those checks:
+
+```php
+guard($price >= 0, 'Price must be non-negative');
+```
+
+Benefits:
+
+- **Readability** – One-line, expressive intent
+- **Consistency** – Same syntax across all projects and frameworks
+- **Less boilerplate** – No repetitive if + throw blocks
+- **Framework-agnostic** – Works in plain PHP, Symfony, Laravel…
+
 ## 📦 Installation
 
 ```bash
