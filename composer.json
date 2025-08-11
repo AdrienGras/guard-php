@@ -3,6 +3,14 @@
     "description": "A tiny guard() helper for PHP (Symfony/Laravel/plain).",
     "type": "library",
     "license": "MIT",
+    "version": "1.0.0",
+    "keywords": [
+        "guard",
+        "helper",
+        "php",
+        "symfony",
+        "laravel"
+    ],
     "autoload": {
         "psr-4": {
             "AdrienGras\\GuardPHP\\": "src/"
