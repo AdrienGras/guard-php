@@ -3,7 +3,7 @@
     "description": "A tiny guard() helper for PHP (Symfony/Laravel/plain).",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "keywords": [
         "guard",
         "helper",
@@ -27,7 +27,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": "^8.1"
+        "php": "^8.2"
     },
     "require-dev": {
         "pestphp/pest": "^2",
