@@ -1,4 +1,10 @@
-## 1.0.1 (2025-08-11)
+## Unreleased
+
+### 🐛🚑️ Fixes
+
+- Fixing deps
+
+## v1.0.1 (2025-08-11)
 
 ### 🔧🔨📦️ Configuration, Scripts, Packages
 
