@@ -1,0 +1,34 @@
+{
+    "name": "adriengras/guard-php",
+    "description": "A tiny guard() helper for PHP (Symfony/Laravel/plain).",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AdrienGras\\GuardPHP\\": "src/"
+        },
+        "files": [
+            "src/guard.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Adrien Gras",
+            "email": "agr@owlnext.fr"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require-dev": {
+        "pestphp/pest": "^2",
+        "phpunit/phpunit": "^10"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test:cov": "XDEBUG_MODE=coverage vendor/bin/pest --coverage"
+    }
+}
